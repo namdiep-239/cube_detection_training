@@ -1,0 +1,28 @@
+{
+  "version": "6.1.0",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "cube",
+      "points": [
+        [
+          494.99999999999994,
+          96.71641791044776
+        ],
+        [
+          554.7014925373134,
+          150.44776119402985
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    }
+  ],
+  "imagePath": "A_20260503_160831_0056.jpg",
+  "imageData": null,
+  "imageHeight": 480,
+  "imageWidth": 640
+}

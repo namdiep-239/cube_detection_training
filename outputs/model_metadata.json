@@ -1,0 +1,30 @@
+{
+  "model": "EfficientDet-Lite0",
+  "image_size": 320,
+  "classes": [
+    "cube"
+  ],
+  "epochs": 50,
+  "batch_size": 8,
+  "train_images": 280,
+  "val_images": 60,
+  "test_images": 61,
+  "val_metrics": {
+    "mAP": 0.7151,
+    "AP50": 1.0,
+    "AP75": 0.906,
+    "AR": 0.7933
+  },
+  "test_metrics": {
+    "mAP": 0.7121,
+    "AP50": 0.9884,
+    "AP75": 0.961,
+    "AR": 0.7967,
+    "precision": 0.9839,
+    "recall": 1.0,
+    "f1": 0.9919,
+    "tp": 61,
+    "fp": 1,
+    "fn": 0
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "version": "6.1.0",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "cube",
+      "points": [
+        [
+          470.3125,
+          86.875
+        ],
+        [
+          537.8125,
+          149.375
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    }
+  ],
+  "imagePath": "A_20260418_145002_0010.jpg",
+  "imageData": null,
+  "imageHeight": 480,
+  "imageWidth": 640
+}

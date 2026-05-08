@@ -1,0 +1,40 @@
+# -------------------------------------------------------
+# Generated during training — recreated by train.py
+# -------------------------------------------------------
+outputs/voc_split/
+outputs/voc_xml_all/
+outputs/train_log.txt
+
+# Inference output images — recreated by test_inference.py
+outputs/inference_test/
+outputs/missed_detections/
+
+# SavedModel — large binary (33 MB), regenerate with train.py
+models/saved_model/
+
+# EdgeTPU compiler artefact — regenerate with edgetpu_compiler
+models/cube_detector_int8_edgetpu.log
+
+# -------------------------------------------------------
+# Python
+# -------------------------------------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+
+# Old training runs kept for reference — not part of the repo
+models_old/
+outputs_old/
+
+# -------------------------------------------------------
+# OS / editor noise
+# -------------------------------------------------------
+.DS_Store
+Thumbs.db
+nohup.out
+*.swp
+.idea/
+.vscode/
