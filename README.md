@@ -174,3 +174,4 @@ def detect_cube(img_bgr, threshold=0.5):
   negatives are a concern.
 - **Re-training**: collect failure cases, re-annotate, add to `dataset/images/`,
   re-export COCO JSON, re-run merge → train.
+# cube_detection_training
