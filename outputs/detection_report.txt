@@ -1,5 +1,5 @@
 ============================================================
-CUBE DETECTION MODEL REPORT
+CYLINDER DETECTION MODEL REPORT
 ============================================================
 
 Model:        EfficientDet-Lite0 (INT8 quantized)
@@ -7,29 +7,29 @@ Target HW:    Google Coral USB Accelerator
 Image size:   320x320
 Epochs:       50
 Batch size:   8
-Train images: 280
-Val images:   60
-Test images:  61
+Train images: 152
+Val images:   32
+Test images:  34
 
 ----------------------------------------------
 EVALUATION METRICS  (COCO, IoU averaged 0.50:0.95)
 ----------------------------------------------
                     Validation        Test
-  mAP  (IoU 0.50:0.95)    0.7151      0.7121
-  AP50 (IoU 0.50)       1.0000      0.9884
-  AP75 (IoU 0.75)       0.9060      0.9610
-  AR   (maxDets=100)    0.7933      0.7967
+  mAP  (IoU 0.50:0.95)    0.8193      0.8269
+  AP50 (IoU 0.50)       1.0000      1.0000
+  AP75 (IoU 0.75)       1.0000      0.9832
+  AR   (maxDets=100)    0.8687      0.8853
 
 -------------------------------------------------------
 TEST SET DETECTION REPORT  (IoU=0.50, confidence=0.50)
 -------------------------------------------------------
                   precision   recall   f1-score  support
 
-            cube     0.9839   1.0000     0.9919       61
+        cylinder     1.0000   1.0000     1.0000       34
 
-       micro avg     0.9839   1.0000     0.9919       61
+       micro avg     1.0000   1.0000     1.0000       34
 
-  TP:   61   FP:    1   FN:    0
+  TP:   34   FP:    0   FN:    0
 
 ----------------------------------------------
 INFERENCE TIME ESTIMATE
@@ -42,7 +42,7 @@ INFERENCE TIME ESTIMATE
 ----------------------------------------------
 DEPLOYMENT
 ----------------------------------------------
-  1. edgetpu_compiler -s models/cube_detector_int8.tflite
-  2. Output: models/cube_detector_int8_edgetpu.tflite
+  1. edgetpu_compiler -s models/cylinder_detector_int8.tflite
+  2. Output: models/cylinder_detector_int8_edgetpu.tflite
   3. python scripts/compare_raw_vs_tflite.py
   4. python scripts/test_inference.py

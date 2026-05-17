@@ -1,0 +1,28 @@
+{
+  "version": "6.1.0",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "cylinder",
+      "points": [
+        [
+          27.835820895522396,
+          358.65671641791045
+        ],
+        [
+          106.19402985074626,
+          430.29850746268653
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    }
+  ],
+  "imagePath": "ur_image-178.png",
+  "imageData": null,
+  "imageHeight": 480,
+  "imageWidth": 640
+}

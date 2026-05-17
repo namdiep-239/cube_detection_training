@@ -1,7 +1,7 @@
 """
 Merge multiple COCO JSON files (from labelme export) into one merged.json.
 Remaps image_id and annotation_id to avoid conflicts.
-Forces single category: cube (id=1).
+Forces single category: cylinder (id=1).
 """
 
 import json
@@ -38,9 +38,9 @@ print()
 # -----------------------------------------------------------------------
 
 merged = {
-    "info":        {"description": "Merged cube detection dataset"},
+    "info":        {"description": "Merged cylinder detection dataset"},
     "licenses":    [],
-    "categories":  [{"id": 1, "name": "cube", "supercategory": "object"}],
+    "categories":  [{"id": 1, "name": "cylinder", "supercategory": "object"}],
     "images":      [],
     "annotations": [],
 }
@@ -65,7 +65,7 @@ for json_path in json_files:
         })
         next_img_id += 1
 
-    # All categories map to cube (id=1)
+    # All categories map to cylinder (id=1)
     src_anns = data.get("annotations", [])
     for ann in src_anns:
         new_img_id = img_id_map.get(ann["image_id"])

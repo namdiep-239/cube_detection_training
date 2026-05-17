@@ -3,12 +3,12 @@ Standalone inference test for cube detection on Google Coral EdgeTPU.
 Falls back to CPU TFLite if EdgeTPU / pycoral is not available.
 
 Usage:
-  # After compiling: edgetpu_compiler -s models/cube_detector_best.tflite
+  # After compiling: edgetpu_compiler -s models/cylinder_detector_best.tflite
   python scripts/test_inference.py
 
   # Explicit paths
   python scripts/test_inference.py \
-      --model  models/cube_detector_best_edgetpu.tflite \
+      --model  models/cylinder_detector_best_edgetpu.tflite \
       --images dataset/images/
 """
 
@@ -24,9 +24,9 @@ import numpy as np
 # Args
 # -----------------------------------------------------------------------
 
-parser = argparse.ArgumentParser(description="Inference test for cube detector")
+parser = argparse.ArgumentParser(description="Inference test for cylinder detector")
 parser.add_argument("--model",      type=Path,
-                    default=Path("./models/cube_detector_best_edgetpu.tflite"),
+                    default=Path("./models/cylinder_detector_best_edgetpu.tflite"),
                     help="Path to EdgeTPU-compiled .tflite model")
 parser.add_argument("--images-dir", type=Path,
                     default=Path("./dataset/images"),
@@ -71,13 +71,13 @@ if not USE_CORAL:
     # Try edgetpu model first (runs on CPU if EdgeTPU unavailable),
     # then fall back to plain .tflite
     cpu_model = args.model if args.model.exists() else \
-                Path("./models/cube_detector_best.tflite")
+                Path("./models/cylinder_detector_best.tflite")
 
     if not cpu_model.exists():
         sys.exit(
             f"ERROR: No model found.\n"
             f"  Tried: {args.model}\n"
-            f"  Tried: ./models/cube_detector_best.tflite\n"
+            f"  Tried: ./models/cylinder_detector_best.tflite\n"
             f"Run training first: python scripts/train.py"
         )
 
@@ -288,7 +288,7 @@ for img_path in image_paths:
     out_img = img_bgr.copy()
     for (x1, y1, x2, y2), score in zip(boxes, scores):
         cv2.rectangle(out_img, (x1, y1), (x2, y2), (0, 0, 255), 2)
-        label = f"cube {score:.2f}"
+        label = f"cylinder {score:.2f}"
         (tw, th), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.55, 1)
         cv2.rectangle(out_img, (x1, y1 - th - 6), (x1 + tw + 4, y1), (0, 0, 255), -1)
         cv2.putText(out_img, label, (x1 + 2, y1 - 4),

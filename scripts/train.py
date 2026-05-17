@@ -1,5 +1,5 @@
 """
-EfficientDet-Lite0 training pipeline for cube detection.
+EfficientDet-Lite0 training pipeline for cylinder detection.
 Targets Google Coral USB Accelerator (EdgeTPU) via INT8 quantization.
 
 Dataset split: 70 / 15 / 15  (train / val / test)
@@ -12,9 +12,9 @@ Evaluation:
 Saved models (mirrors gesture_recognition module workflow):
   models/saved_model/                  — TF SavedModel  (original; use for fine-tuning
                                           or converting to ONNX / CoreML / etc.)
-  models/cube_detector_float32.tflite  — Float32 TFLite (no quantization; baseline
+  models/cylinder_detector_float32.tflite  — Float32 TFLite (no quantization; baseline
                                           for compare_raw_vs_tflite.py)
-  models/cube_detector_int8.tflite     — INT8 TFLite    (EdgeTPU deployment target)
+  models/cylinder_detector_int8.tflite     — INT8 TFLite    (EdgeTPU deployment target)
 
 Output files (match gesture_recognition module style):
   outputs/training_history.png    — grouped bar: val vs test metrics (2-subplot)
@@ -50,7 +50,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 # Args
 # -----------------------------------------------------------------------
 
-parser = argparse.ArgumentParser(description="Train EfficientDet-Lite0 for cube detection")
+parser = argparse.ArgumentParser(description="Train EfficientDet-Lite0 for cylinder detection")
 parser.add_argument("--data-dir",      type=Path, default=Path("./dataset"))
 parser.add_argument("--output-dir",    type=Path, default=Path("./outputs"))
 parser.add_argument("--image-size",    type=int,  default=320)
@@ -64,10 +64,10 @@ MODELS_DIR    = Path("./models")
 MODELS_DIR.mkdir(parents=True, exist_ok=True)
 args.output_dir.mkdir(parents=True, exist_ok=True)
 
-LABEL_MAP          = {1: "cube"}
+LABEL_MAP          = {1: "cylinder"}
 SAVED_MODEL_DIR    = MODELS_DIR / "saved_model"
-FLOAT32_MODEL_PATH = MODELS_DIR / "cube_detector_float32.tflite"
-MODEL_PATH         = MODELS_DIR / "cube_detector_int8.tflite"   # used for evaluation
+FLOAT32_MODEL_PATH = MODELS_DIR / "cylinder_detector_float32.tflite"
+MODEL_PATH         = MODELS_DIR / "cylinder_detector_int8.tflite"   # used for evaluation
 METADATA_PATH      = args.output_dir / "model_metadata.json"
 VOC_SPLIT_DIR      = args.output_dir / "voc_split"
 IMAGES_DIR         = args.data_dir / "images"
@@ -115,12 +115,16 @@ def coco_to_pascal_voc(coco_json_path: Path, images_dir: Path, xml_out_dir: Path
             continue
         h, w = img.shape[:2]
 
+        # Always use .jpg extension in XML — tflite_model_maker requires JPEG.
+        # The split_dataset step converts the actual image file to JPEG.
+        jpeg_name = img_path.stem + ".jpg"
+
         root = ET.Element("annotation")
         ET.SubElement(root, "folder").text   = "images"
-        ET.SubElement(root, "filename").text = img_path.name
+        ET.SubElement(root, "filename").text = jpeg_name
         ET.SubElement(root, "path").text     = str(img_path.resolve())
         src = ET.SubElement(root, "source")
-        ET.SubElement(src, "database").text  = "cube_detection"
+        ET.SubElement(src, "database").text  = "cylinder_detection"
         sz  = ET.SubElement(root, "size")
         ET.SubElement(sz,  "width").text     = str(w)
         ET.SubElement(sz,  "height").text    = str(h)
@@ -135,7 +139,7 @@ def coco_to_pascal_voc(coco_json_path: Path, images_dir: Path, xml_out_dir: Path
             if xmax <= xmin or ymax <= ymin:
                 continue
             obj = ET.SubElement(root, "object")
-            ET.SubElement(obj, "name").text      = "cube"
+            ET.SubElement(obj, "name").text      = "cylinder"
             ET.SubElement(obj, "pose").text      = "Unspecified"
             ET.SubElement(obj, "truncated").text = "0"
             ET.SubElement(obj, "difficult").text = "0"
@@ -191,9 +195,15 @@ def split_dataset(converted: list, split_dir: Path, seed: int = 42):
         ann_dir.mkdir(parents=True, exist_ok=True)
 
         for img_path, xml_path in item_list:
-            link = img_dir / img_path.name
-            if not link.exists():
-                link.symlink_to(img_path.resolve())
+            # XML always references stem.jpg — ensure a JPEG exists in split dir.
+            dest = img_dir / (img_path.stem + ".jpg")
+            if not dest.exists():
+                if img_path.suffix.lower() in (".jpg", ".jpeg"):
+                    dest.symlink_to(img_path.resolve())   # already JPEG → symlink
+                else:
+                    # PNG / other format → convert to JPEG in-place
+                    img_arr = cv2.imread(str(img_path))
+                    cv2.imwrite(str(dest), img_arr, [cv2.IMWRITE_JPEG_QUALITY, 95])
             shutil.copy2(xml_path, ann_dir / xml_path.name)
 
     print(f"  Split → train: {len(splits['train'])}, "
@@ -433,7 +443,7 @@ def generate_outputs(val_m: dict, test_m: dict,
         ax2.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.015,
                  f"{v:.4f}", ha="center", va="bottom", fontsize=10, fontweight="bold")
 
-    plt.suptitle("Cube Detection — EfficientDet-Lite0", fontsize=13, fontweight="bold")
+    plt.suptitle("Cylinder Detection — EfficientDet-Lite0", fontsize=13, fontweight="bold")
     plt.tight_layout()
     out = args.output_dir / "training_history.png"
     plt.savefig(out, dpi=150, bbox_inches="tight")
@@ -445,7 +455,7 @@ def generate_outputs(val_m: dict, test_m: dict,
     out = args.output_dir / "detection_report.txt"
     with open(out, "w") as f:
         f.write("=" * 60 + "\n")
-        f.write("CUBE DETECTION MODEL REPORT\n")
+        f.write("CYLINDER DETECTION MODEL REPORT\n")
         f.write("=" * 60 + "\n\n")
         f.write(f"Model:        EfficientDet-Lite0 (INT8 quantized)\n")
         f.write(f"Target HW:    Google Coral USB Accelerator\n")
@@ -482,7 +492,7 @@ def generate_outputs(val_m: dict, test_m: dict,
         f.write(f"{'':>16}{'precision':>11}{'recall':>9}"
                 f"{'f1-score':>11}{'support':>9}\n\n")
         support = tp + fn   # total ground-truth boxes in test set
-        f.write(f"{'cube':>16}{precision:>11.4f}{recall:>9.4f}"
+        f.write(f"{'cylinder':>16}{precision:>11.4f}{recall:>9.4f}"
                 f"{f1:>11.4f}{support:>9d}\n\n")
         f.write(f"{'micro avg':>16}{precision:>11.4f}{recall:>9.4f}"
                 f"{f1:>11.4f}{support:>9d}\n\n")
@@ -498,8 +508,8 @@ def generate_outputs(val_m: dict, test_m: dict,
         f.write("-" * 46 + "\n")
         f.write("DEPLOYMENT\n")
         f.write("-" * 46 + "\n")
-        f.write("  1. edgetpu_compiler -s models/cube_detector_int8.tflite\n")
-        f.write("  2. Output: models/cube_detector_int8_edgetpu.tflite\n")
+        f.write("  1. edgetpu_compiler -s models/cylinder_detector_int8.tflite\n")
+        f.write("  2. Output: models/cylinder_detector_int8_edgetpu.tflite\n")
         f.write("  3. python scripts/compare_raw_vs_tflite.py\n")
         f.write("  4. python scripts/test_inference.py\n")
     print(f"  Saved: {out}")
@@ -549,7 +559,7 @@ def generate_outputs(val_m: dict, test_m: dict,
                 continue
             ax.add_patch(patches.Rectangle((x1, y1), x2-x1, y2-y1,
                 linewidth=2, edgecolor="#FF3333", facecolor="none"))
-            ax.text(x1, max(0, y1 - 4), f"cube {score:.2f}",
+            ax.text(x1, max(0, y1 - 4), f"cylinder {score:.2f}",
                     fontsize=9, fontweight="bold", color="white",
                     bbox=dict(facecolor="#FF3333", alpha=0.85, pad=1, edgecolor="none"))
 
@@ -749,7 +759,7 @@ print(f"  Saved: {SAVED_MODEL_DIR}/")
 #    compare_raw_vs_tflite.py to measure accuracy loss from INT8 quantization.
 model.export(
     export_dir=str(MODELS_DIR),
-    tflite_filename="cube_detector_float32.tflite",
+    tflite_filename="cylinder_detector_float32.tflite",
 )
 print(f"  Saved: {FLOAT32_MODEL_PATH}")
 
@@ -758,7 +768,7 @@ print(f"  Saved: {FLOAT32_MODEL_PATH}")
 quant_config = QuantizationConfig.for_int8(representative_data=train_data)
 model.export(
     export_dir=str(MODELS_DIR),
-    tflite_filename="cube_detector_int8.tflite",
+    tflite_filename="cylinder_detector_int8.tflite",
     quantization_config=quant_config,
 )
 print(f"  Saved: {MODEL_PATH}")
@@ -780,7 +790,7 @@ print("\n  Saving metadata...")
 metadata = {
     "model":        "EfficientDet-Lite0",
     "image_size":   args.image_size,
-    "classes":      ["cube"],
+    "classes":      ["cylinder"],
     "epochs":       args.epochs,
     "batch_size":   args.batch_size,
     "train_images": len(train_items),

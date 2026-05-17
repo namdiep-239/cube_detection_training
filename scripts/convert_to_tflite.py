@@ -5,8 +5,8 @@ Mirrors gesture_recognition/convert_to_tflite.py — run this after train.py
 if you need to re-export TFLite files without retraining.
 
 Produces:
-  models/cube_detector_float32.tflite  — Float32, no quantization (baseline)
-  models/cube_detector_int8.tflite     — INT8 fully quantized (EdgeTPU target)
+  models/cylinder_detector_float32.tflite  — Float32, no quantization (baseline)
+  models/cylinder_detector_int8.tflite     — INT8 fully quantized (EdgeTPU target)
 
 Usage:
   /home/nam/.pyenv/versions/gesture_env/bin/python \
@@ -96,7 +96,7 @@ print("\n[1/2] Converting → Float32 TFLite ...")
 converter = tf.lite.TFLiteConverter.from_saved_model(str(args.saved_model_dir))
 float32_model = converter.convert()
 
-float32_path = args.output_dir / "cube_detector_float32.tflite"
+float32_path = args.output_dir / "cylinder_detector_float32.tflite"
 with open(float32_path, "wb") as f:
     f.write(float32_model)
 print(f"  Saved: {float32_path}  ({len(float32_model)/1024/1024:.1f} MB)")
@@ -114,7 +114,7 @@ converter.inference_output_type = tf.uint8
 
 int8_model = converter.convert()
 
-int8_path = args.output_dir / "cube_detector_int8.tflite"
+int8_path = args.output_dir / "cylinder_detector_int8.tflite"
 with open(int8_path, "wb") as f:
     f.write(int8_model)
 print(f"  Saved: {int8_path}  ({len(int8_model)/1024/1024:.1f} MB)")
@@ -132,5 +132,5 @@ print(f"  Size reduction from quantization: {size_reduction:.1f}%")
 print()
 print("Next steps:")
 print("  1. Compare accuracy:  python scripts/compare_raw_vs_tflite.py")
-print("  2. Compile EdgeTPU:   edgetpu_compiler -s models/cube_detector_int8.tflite")
+print("  2. Compile EdgeTPU:   edgetpu_compiler -s models/cylinder_detector_int8.tflite")
 print("=" * 50)

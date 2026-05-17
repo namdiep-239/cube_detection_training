@@ -18,9 +18,9 @@ Usage:
 
   # Custom paths
   python scripts/compare_raw_vs_tflite.py \
-      --float32-model  models/cube_detector_float32.tflite \
-      --int8-model     models/cube_detector_int8.tflite \
-      --edgetpu-model  models/cube_detector_int8_edgetpu.tflite \
+      --float32-model  models/cylinder_detector_float32.tflite \
+      --int8-model     models/cylinder_detector_int8.tflite \
+      --edgetpu-model  models/cylinder_detector_int8_edgetpu.tflite \
       --test-dir       outputs/voc_split/test \
       --output         results/compare_results.json
 """
@@ -47,11 +47,11 @@ parser = argparse.ArgumentParser(
     description="Compare Float32 / INT8 / EdgeTPU TFLite detection accuracy"
 )
 parser.add_argument("--float32-model",  type=Path,
-                    default=Path("./models/cube_detector_float32.tflite"))
+                    default=Path("./models/cylinder_detector_float32.tflite"))
 parser.add_argument("--int8-model",     type=Path,
-                    default=Path("./models/cube_detector_int8.tflite"))
+                    default=Path("./models/cylinder_detector_int8.tflite"))
 parser.add_argument("--edgetpu-model",  type=Path,
-                    default=Path("./models/cube_detector_int8_edgetpu.tflite"))
+                    default=Path("./models/cylinder_detector_int8_edgetpu.tflite"))
 parser.add_argument("--test-dir",       type=Path,
                     default=Path("./outputs/voc_split/test"),
                     help="Directory with images/ and annotations/ sub-folders")

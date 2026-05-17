@@ -3,7 +3,7 @@ Convert labelme per-image JSON files → single COCO JSON.
 
 Reads all labelme *.json files sitting next to images in --images-dir,
 skips any non-labelme JSON (e.g. annotations.json), and writes a clean
-COCO file with category "cube" (id=1).
+COCO file with category "cylinder" (id=1).
 
 Usage:
   python scripts/labelme_to_coco.py \
@@ -67,7 +67,7 @@ if not labelme_jsons:
 merged = {
     "info":        {"description": "Cube detection dataset (from labelme)"},
     "licenses":    [],
-    "categories":  [{"id": 1, "name": "cube", "supercategory": "object"}],
+    "categories":  [{"id": 1, "name": "cylinder", "supercategory": "object"}],
     "images":      [],
     "annotations": [],
 }
@@ -89,7 +89,7 @@ for jf in labelme_jsons:
         continue
 
     shapes = [s for s in lm.get("shapes", [])
-              if s.get("shape_type") == "rectangle" and s.get("label") == "cube"]
+              if s.get("shape_type") == "rectangle" and s.get("label") == "cylinder"]
 
     if not shapes:
         # File annotated but no cube box drawn yet — skip silently

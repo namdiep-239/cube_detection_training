@@ -2,29 +2,29 @@
   "model": "EfficientDet-Lite0",
   "image_size": 320,
   "classes": [
-    "cube"
+    "cylinder"
   ],
   "epochs": 50,
   "batch_size": 8,
-  "train_images": 280,
-  "val_images": 60,
-  "test_images": 61,
+  "train_images": 152,
+  "val_images": 32,
+  "test_images": 34,
   "val_metrics": {
-    "mAP": 0.7151,
+    "mAP": 0.8193,
     "AP50": 1.0,
-    "AP75": 0.906,
-    "AR": 0.7933
+    "AP75": 1.0,
+    "AR": 0.8687
   },
   "test_metrics": {
-    "mAP": 0.7121,
-    "AP50": 0.9884,
-    "AP75": 0.961,
-    "AR": 0.7967,
-    "precision": 0.9839,
+    "mAP": 0.8269,
+    "AP50": 1.0,
+    "AP75": 0.9832,
+    "AR": 0.8853,
+    "precision": 1.0,
     "recall": 1.0,
-    "f1": 0.9919,
-    "tp": 61,
-    "fp": 1,
+    "f1": 1.0,
+    "tp": 34,
+    "fp": 0,
     "fn": 0
   }
 }
