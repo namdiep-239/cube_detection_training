@@ -1,0 +1,28 @@
+{
+  "version": "6.1.0",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "cube",
+      "points": [
+        [
+          342.76119402985074,
+          21.34328358208957
+        ],
+        [
+          393.5074626865672,
+          78.05970149253733
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    }
+  ],
+  "imagePath": "ur_1cube-6.png",
+  "imageData": null,
+  "imageHeight": 480,
+  "imageWidth": 640
+}

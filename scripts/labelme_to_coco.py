@@ -64,10 +64,15 @@ if not labelme_jsons:
 # Convert
 # -----------------------------------------------------------------------
 
+LABEL_TO_ID = {"cylinder": 1, "cube": 2}
+
 merged = {
-    "info":        {"description": "Cube detection dataset (from labelme)"},
+    "info":        {"description": "Cylinder + cube detection dataset (from labelme)"},
     "licenses":    [],
-    "categories":  [{"id": 1, "name": "cylinder", "supercategory": "object"}],
+    "categories":  [
+        {"id": 1, "name": "cylinder", "supercategory": "object"},
+        {"id": 2, "name": "cube",     "supercategory": "object"},
+    ],
     "images":      [],
     "annotations": [],
 }
@@ -89,10 +94,11 @@ for jf in labelme_jsons:
         continue
 
     shapes = [s for s in lm.get("shapes", [])
-              if s.get("shape_type") == "rectangle" and s.get("label") == "cylinder"]
+              if s.get("shape_type") == "rectangle"
+              and s.get("label") in LABEL_TO_ID]
 
     if not shapes:
-        # File annotated but no cube box drawn yet — skip silently
+        # No recognised labels — skip silently
         skipped += 1
         continue
 
@@ -120,10 +126,11 @@ for jf in labelme_jsons:
         if bw <= 0 or bh <= 0:
             continue
 
+        cat_id = LABEL_TO_ID[shape["label"]]   # 1=cylinder, 2=cube
         merged["annotations"].append({
             "id":          ann_id,
             "image_id":    img_id,
-            "category_id": 1,
+            "category_id": cat_id,
             "bbox":        [xmin, ymin, bw, bh],   # COCO: [x, y, w, h]
             "area":        bw * bh,
             "iscrowd":     0,

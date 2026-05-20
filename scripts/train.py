@@ -64,7 +64,7 @@ MODELS_DIR    = Path("./models")
 MODELS_DIR.mkdir(parents=True, exist_ok=True)
 args.output_dir.mkdir(parents=True, exist_ok=True)
 
-LABEL_MAP          = {1: "cylinder"}
+LABEL_MAP          = {1: "cylinder", 2: "cube"}
 SAVED_MODEL_DIR    = MODELS_DIR / "saved_model"
 FLOAT32_MODEL_PATH = MODELS_DIR / "cylinder_detector_float32.tflite"
 MODEL_PATH         = MODELS_DIR / "cylinder_detector_int8.tflite"   # used for evaluation
@@ -93,6 +93,9 @@ def coco_to_pascal_voc(coco_json_path: Path, images_dir: Path, xml_out_dir: Path
     ann_by_image: dict = {}
     for ann in coco.get("annotations", []):
         ann_by_image.setdefault(ann["image_id"], []).append(ann)
+
+    # category_id → name from COCO (used for multi-class XML <name> tags)
+    cat_name = {cat["id"]: cat["name"] for cat in coco.get("categories", [])}
 
     converted, skipped = [], 0
 
@@ -139,7 +142,7 @@ def coco_to_pascal_voc(coco_json_path: Path, images_dir: Path, xml_out_dir: Path
             if xmax <= xmin or ymax <= ymin:
                 continue
             obj = ET.SubElement(root, "object")
-            ET.SubElement(obj, "name").text      = "cylinder"
+            ET.SubElement(obj, "name").text      = cat_name.get(ann["category_id"], "cylinder")
             ET.SubElement(obj, "pose").text      = "Unspecified"
             ET.SubElement(obj, "truncated").text = "0"
             ET.SubElement(obj, "difficult").text = "0"

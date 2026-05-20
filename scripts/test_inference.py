@@ -26,7 +26,7 @@ import numpy as np
 
 parser = argparse.ArgumentParser(description="Inference test for cylinder detector")
 parser.add_argument("--model",      type=Path,
-                    default=Path("./models/cylinder_detector_best_edgetpu.tflite"),
+                    default=Path("./models/cylinder_detector_int8_edgetpu.tflite"),
                     help="Path to EdgeTPU-compiled .tflite model")
 parser.add_argument("--images-dir", type=Path,
                     default=Path("./dataset/images"),
@@ -140,7 +140,10 @@ def run_cpu_inference(img_bgr: np.ndarray):
         elif len(s) == 2:
             shape2_tensors.append(d)
 
-    scores_detail = sorted(shape2_tensors, key=_suffix)[0] if shape2_tensors else None
+    # :1=scores, :2=classes — sorted by suffix gives [scores, classes]
+    sorted_s2     = sorted(shape2_tensors, key=_suffix)
+    scores_detail = sorted_s2[0] if sorted_s2 else None
+    classes_detail = sorted_s2[1] if len(sorted_s2) > 1 else None
 
     if boxes_detail is None or scores_detail is None:
         print("  [WARN] Cannot identify output tensors")
@@ -162,16 +165,31 @@ def run_cpu_inference(img_bgr: np.ndarray):
     else:
         raw_boxes = raw_boxes.astype(np.float32)
 
+    # Read class IDs to filter by target class (cylinder = class 0)
+    if classes_detail is not None:
+        raw_cls = interpreter.get_tensor(classes_detail['index'])[0]
+        if classes_detail['dtype'] == np.uint8:
+            sc, zp = classes_detail['quantization']
+            class_ids = (sc * (raw_cls.astype(np.float32) - zp)).round().astype(int)
+        else:
+            class_ids = raw_cls.astype(int)
+    else:
+        class_ids = np.zeros(len(scores), dtype=int)  # single-class fallback
+
     # Boxes: normalized [ymin, xmin, ymax, xmax] → original pixel coords
     h, w = img_bgr.shape[:2]
     boxes_pixel = []
-    for ymin, xmin, ymax, xmax in raw_boxes:
+    filtered_scores = []
+    for i, (ymin, xmin, ymax, xmax) in enumerate(raw_boxes):
+        if class_ids[i] != 0:        # 0 = cylinder (first class in LABEL_MAP)
+            continue                  # skip cube (class 1) and any other class
         boxes_pixel.append([
             int(xmin * w), int(ymin * h),
             int(xmax * w), int(ymax * h),
         ])
+        filtered_scores.append(float(scores[i]))
 
-    return boxes_pixel, scores.tolist(), inf_ms
+    return boxes_pixel, filtered_scores, inf_ms
 
 
 # -----------------------------------------------------------------------
@@ -210,7 +228,9 @@ def run_coral_inference(img_bgr: np.ndarray):
         elif len(s) == 2:
             shape2_tensors.append(d)
 
-    scores_detail = sorted(shape2_tensors, key=_suffix)[0] if shape2_tensors else None
+    sorted_s2      = sorted(shape2_tensors, key=_suffix)
+    scores_detail  = sorted_s2[0] if sorted_s2 else None
+    classes_detail = sorted_s2[1] if len(sorted_s2) > 1 else None
 
     if boxes_detail is None or scores_detail is None:
         return [], [], inf_ms
@@ -230,15 +250,29 @@ def run_coral_inference(img_bgr: np.ndarray):
     else:
         raw_boxes = raw_boxes.astype(np.float32)
 
+    if classes_detail is not None:
+        raw_cls = interpreter.get_tensor(classes_detail['index'])[0]
+        if classes_detail['dtype'] == np.uint8:
+            sc, zp = classes_detail['quantization']
+            class_ids = (sc * (raw_cls.astype(np.float32) - zp)).round().astype(int)
+        else:
+            class_ids = raw_cls.astype(int)
+    else:
+        class_ids = np.zeros(len(scores), dtype=int)
+
     h, w = img_bgr.shape[:2]
     boxes_pixel = []
-    for ymin, xmin, ymax, xmax in raw_boxes:
+    filtered_scores = []
+    for i, (ymin, xmin, ymax, xmax) in enumerate(raw_boxes):
+        if class_ids[i] != 0:        # 0 = cylinder; skip cube (class 1)
+            continue
         boxes_pixel.append([
             int(xmin * w), int(ymin * h),
             int(xmax * w), int(ymax * h),
         ])
+        filtered_scores.append(float(scores[i]))
 
-    return boxes_pixel, scores.tolist(), inf_ms
+    return boxes_pixel, filtered_scores, inf_ms
 
 
 # -----------------------------------------------------------------------

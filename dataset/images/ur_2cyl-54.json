@@ -1,0 +1,46 @@
+{
+  "version": "6.1.0",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "cylinder",
+      "points": [
+        [
+          350.22388059701495,
+          359.4029850746268
+        ],
+        [
+          413.65671641791045,
+          427.3134328358209
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "cylinder",
+      "points": [
+        [
+          477.089552238806,
+          362.3880597014925
+        ],
+        [
+          550.2238805970148,
+          430.29850746268653
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    }
+  ],
+  "imagePath": "ur_2cyl-54.png",
+  "imageData": null,
+  "imageHeight": 480,
+  "imageWidth": 640
+}

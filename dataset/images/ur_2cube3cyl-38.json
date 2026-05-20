@@ -1,0 +1,100 @@
+{
+  "version": "6.1.0",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "cube",
+      "points": [
+        [
+          268.13432835820896,
+          217.61194029850748
+        ],
+        [
+          329.32835820895525,
+          276.56716417910445
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "cube",
+      "points": [
+        [
+          203.955223880597,
+          293.7313432835821
+        ],
+        [
+          256.94029850746267,
+          341.4925373134328
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "cylinder",
+      "points": [
+        [
+          161.4179104477612,
+          85.5223880597015
+        ],
+        [
+          226.34328358208953,
+          154.17910447761193
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "cylinder",
+      "points": [
+        [
+          489.77611940298505,
+          61.64179104477613
+        ],
+        [
+          564.4029850746268,
+          134.02985074626866
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "cylinder",
+      "points": [
+        [
+          29.32835820895523,
+          350.44776119402985
+        ],
+        [
+          107.68656716417911,
+          419.8507462686567
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "rectangle",
+      "flags": {},
+      "mask": null
+    }
+  ],
+  "imagePath": "ur_2cube3cyl-38.png",
+  "imageData": null,
+  "imageHeight": 480,
+  "imageWidth": 640
+}

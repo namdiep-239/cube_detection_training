@@ -6,25 +6,25 @@
   ],
   "epochs": 50,
   "batch_size": 8,
-  "train_images": 152,
-  "val_images": 32,
-  "test_images": 34,
+  "train_images": 352,
+  "val_images": 75,
+  "test_images": 76,
   "val_metrics": {
-    "mAP": 0.8193,
-    "AP50": 1.0,
-    "AP75": 1.0,
-    "AR": 0.8687
+    "mAP": 0.7907,
+    "AP50": 0.9896,
+    "AP75": 0.9896,
+    "AR": 0.8692
   },
   "test_metrics": {
-    "mAP": 0.8269,
+    "mAP": 0.799,
     "AP50": 1.0,
-    "AP75": 0.9832,
-    "AR": 0.8853,
+    "AP75": 0.9686,
+    "AR": 0.8557,
     "precision": 1.0,
-    "recall": 1.0,
-    "f1": 1.0,
-    "tp": 34,
+    "recall": 0.9922,
+    "f1": 0.9961,
+    "tp": 127,
     "fp": 0,
-    "fn": 0
+    "fn": 1
   }
 }

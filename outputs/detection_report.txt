@@ -7,29 +7,29 @@ Target HW:    Google Coral USB Accelerator
 Image size:   320x320
 Epochs:       50
 Batch size:   8
-Train images: 152
-Val images:   32
-Test images:  34
+Train images: 352
+Val images:   75
+Test images:  76
 
 ----------------------------------------------
 EVALUATION METRICS  (COCO, IoU averaged 0.50:0.95)
 ----------------------------------------------
                     Validation        Test
-  mAP  (IoU 0.50:0.95)    0.8193      0.8269
-  AP50 (IoU 0.50)       1.0000      1.0000
-  AP75 (IoU 0.75)       1.0000      0.9832
-  AR   (maxDets=100)    0.8687      0.8853
+  mAP  (IoU 0.50:0.95)    0.7907      0.7990
+  AP50 (IoU 0.50)       0.9896      1.0000
+  AP75 (IoU 0.75)       0.9896      0.9686
+  AR   (maxDets=100)    0.8692      0.8557
 
 -------------------------------------------------------
 TEST SET DETECTION REPORT  (IoU=0.50, confidence=0.50)
 -------------------------------------------------------
                   precision   recall   f1-score  support
 
-        cylinder     1.0000   1.0000     1.0000       34
+        cylinder     1.0000   0.9922     0.9961      128
 
-       micro avg     1.0000   1.0000     1.0000       34
+       micro avg     1.0000   0.9922     0.9961      128
 
-  TP:   34   FP:    0   FN:    0
+  TP:  127   FP:    0   FN:    1
 
 ----------------------------------------------
 INFERENCE TIME ESTIMATE
