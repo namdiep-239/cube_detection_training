@@ -25,11 +25,11 @@ TEST SET DETECTION REPORT  (IoU=0.50, confidence=0.50)
 -------------------------------------------------------
                   precision   recall   f1-score  support
 
-        cylinder     1.0000   0.9922     0.9961      128
+        cylinder     1.0000   0.9896     0.9948       96
 
-       micro avg     1.0000   0.9922     0.9961      128
+       micro avg     1.0000   0.9896     0.9948       96
 
-  TP:  127   FP:    0   FN:    1
+  TP:   95   FP:    0   FN:    1
 
 ----------------------------------------------
 INFERENCE TIME ESTIMATE

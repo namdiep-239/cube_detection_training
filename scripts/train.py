@@ -284,10 +284,10 @@ def run_inference_tflite(interpreter, img_bgr: np.ndarray, input_size: int):
     if boxes_detail is None or not shape2_tensors:
         return [], []
 
-    # Among [1,N] candidates, the one with the smallest name suffix is scores (:1).
-    # Classes has suffix :2. Sorting ascending and taking [0] is robust even if
-    # the output_details list happens to be in a different order.
-    scores_detail = sorted(shape2_tensors, key=_name_suffix)[0]
+    # Among [1,N] candidates: :1 = scores, :2 = classes. Sort ascending by suffix.
+    sorted_s2     = sorted(shape2_tensors, key=_name_suffix)
+    scores_detail  = sorted_s2[0]
+    classes_detail = sorted_s2[1] if len(sorted_s2) > 1 else None
 
     if boxes_detail is None or scores_detail is None:
         return [], []
@@ -308,16 +308,30 @@ def run_inference_tflite(interpreter, img_bgr: np.ndarray, input_size: int):
     else:
         raw_boxes = raw_boxes.astype(np.float32)
 
-    # Boxes: normalized [ymin, xmin, ymax, xmax] → pixel [x1, y1, x2, y2]
+    if classes_detail is not None:
+        raw_cls = interpreter.get_tensor(classes_detail['index'])[0]
+        if classes_detail['dtype'] == np.uint8:
+            sc, zp = classes_detail['quantization']
+            class_ids = (sc * (raw_cls.astype(np.float32) - zp)).round().astype(int)
+        else:
+            class_ids = raw_cls.astype(int)
+    else:
+        class_ids = np.zeros(len(scores), dtype=int)
+
+    # Return cylinder (class 0) predictions only
     h_orig, w_orig = img_bgr.shape[:2]
     boxes_pixel = []
-    for ymin, xmin, ymax, xmax in raw_boxes:
+    filtered_scores = []
+    for i, (ymin, xmin, ymax, xmax) in enumerate(raw_boxes):
+        if class_ids[i] != 0:
+            continue
         boxes_pixel.append([
             int(xmin * w_orig), int(ymin * h_orig),
             int(xmax * w_orig), int(ymax * h_orig),
         ])
+        filtered_scores.append(float(scores[i]))
 
-    return boxes_pixel, scores.tolist()
+    return boxes_pixel, filtered_scores
 
 
 # -----------------------------------------------------------------------
@@ -349,10 +363,12 @@ def evaluate_detection(test_items: list, model_path: Path, input_size: int,
         if img_bgr is None:
             continue
 
-        # Load ground truth from Pascal VOC XML
+        # Load ground truth from Pascal VOC XML — cylinder only
         tree = ET.parse(str(xml_path))
         gt_boxes = []
         for obj in tree.getroot().findall("object"):
+            if obj.find("name").text != "cylinder":
+                continue
             bb = obj.find("bndbox")
             gt_boxes.append([
                 int(bb.find("xmin").text), int(bb.find("ymin").text),
